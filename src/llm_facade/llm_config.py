@@ -11,6 +11,6 @@ class LLMConfig(BaseModel):
         base_url (str): The base URL for the LLM service.
     """
 
-    model_name: str
-    api_key: str
-    base_url: str
+    openai_api_key: str
+    openai_api_base_url: str
+    llm_model: str
