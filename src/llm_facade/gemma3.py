@@ -8,7 +8,7 @@ from llama_index.core.llms import (
 )
 from llama_index.core.llms.callbacks import llm_completion_callback
 from openai import OpenAI
-from pydantic import Field
+from pydantic import Field, PrivateAttr
 from structlog.stdlib import BoundLogger
 
 from llm_facade.llm_config import LLMConfig
@@ -20,7 +20,7 @@ class GemaVllm(CustomLLM):
     config: LLMConfig
     last_log: str = Field(default="", description="Last log message")
 
-    _logger: BoundLogger | None
+    __logger: BoundLogger | None = PrivateAttr(default=None)
 
     def __init__(self, config: LLMConfig, logger: BoundLogger | None = None, *args: Any, **kwargs: Any) -> None:
         client = OpenAI(
@@ -28,7 +28,7 @@ class GemaVllm(CustomLLM):
             base_url=config.openai_api_base_url,
         )
 
-        self._logger = logger
+        self.__logger = logger
         super().__init__(*args, config=config, client=client, **kwargs)
 
         print(f"VLLM client initialized {self.config.openai_api_base_url}")
