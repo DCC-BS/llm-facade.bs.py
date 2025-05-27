@@ -1,6 +1,7 @@
+from structlog import get_logger
+
 from llm_facade.llm_config import LLMConfig
 from llm_facade.qwen3 import QwenVllm
-from structlog import get_logger
 
 
 def test_ctor() -> None:
@@ -13,3 +14,5 @@ def test_ctor() -> None:
     logger = get_logger()
 
     llm = QwenVllm(config=config, logger=logger)
+
+    assert llm.config.openai_api_base_url == config.openai_api_base_url
