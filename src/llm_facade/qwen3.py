@@ -13,7 +13,7 @@ from llm_facade.llm_config import LLMConfig
 class QwenVllm(CustomLLM):
     client: OpenAI
     config: LLMConfig
-    logger: BoundLogger | None
+    _logger: BoundLogger | None
     last_log: str = Field(default="", description="Last log message")
 
     def __init__(self, config: LLMConfig, logger: BoundLogger | None = None, *args: Any, **kwargs: Any) -> None:
@@ -22,7 +22,8 @@ class QwenVllm(CustomLLM):
             base_url=config.openai_api_base_url,
         )
 
-        super().__init__(*args, config=config, client=client, logger=logger, **kwargs)
+        self._logger = logger
+        super().__init__(*args, config=config, client=client, **kwargs)
 
         print(f"""VLLM client initialized:
               url: {self.config.openai_api_base_url}
@@ -63,7 +64,7 @@ class QwenVllm(CustomLLM):
         choice = completion.choices[0]
 
         if choice.finish_reason == "length":
-            self.logger.warning("Completion stopped due to length limit.")
+            self._logger.warning("Completion stopped due to length limit.")
 
         message = completion.choices[0].message
         output: str = message.content or ""  # Handle None case explicitly
@@ -71,7 +72,7 @@ class QwenVllm(CustomLLM):
         try:
             self.last_log = completion.choices[0].model_dump_json()
         except Exception as e:
-            self.logger.exception("Error in model_dump_json")
+            self._logger.exception("Error in model_dump_json")
             self.last_log = str(completion.choices[0])
 
         return CompletionResponse(text=output, raw=completion)
