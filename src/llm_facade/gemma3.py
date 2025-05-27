@@ -27,9 +27,7 @@ class GemaVllm(CustomLLM):
             base_url=config.openai_api_base_url,
         )
 
-        self.logger = logger
-
-        super().__init__(*args, config=config, client=client, **kwargs)
+        super().__init__(*args, config=config, client=client, logger=logger, **kwargs)
 
         print(f"VLLM client initialized {self.config.openai_api_base_url}")
 

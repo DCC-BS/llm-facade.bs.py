@@ -13,7 +13,7 @@ from llm_facade.llm_config import LLMConfig
 class QwenVllm(CustomLLM):
     client: OpenAI
     config: LLMConfig
-    logger: Logger | None = None
+    logger: Logger | None
     last_log: str = Field(default="", description="Last log message")
 
     def __init__(self, config: LLMConfig, logger: Logger | None = None, *args: Any, **kwargs: Any) -> None:
@@ -22,9 +22,7 @@ class QwenVllm(CustomLLM):
             base_url=config.openai_api_base_url,
         )
 
-        self.logger = logger
-
-        super().__init__(*args, config=config, client=client, **kwargs)
+        super().__init__(*args, config=config, client=client, logger=logger, **kwargs)
 
         print(f"""VLLM client initialized:
               url: {self.config.openai_api_base_url}
