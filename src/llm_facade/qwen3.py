@@ -1,10 +1,10 @@
-from logging import Logger
 from typing import Any, final
 
 from llama_index.core.llms import CompletionResponse, CompletionResponseGen, CustomLLM, LLMMetadata
 from llama_index.core.llms.callbacks import llm_completion_callback
 from openai import OpenAI
 from pydantic import Field
+from structlog.stdlib import BoundLogger
 
 from llm_facade.llm_config import LLMConfig
 
@@ -13,10 +13,10 @@ from llm_facade.llm_config import LLMConfig
 class QwenVllm(CustomLLM):
     client: OpenAI
     config: LLMConfig
-    logger: Logger | None
+    logger: BoundLogger | None
     last_log: str = Field(default="", description="Last log message")
 
-    def __init__(self, config: LLMConfig, logger: Logger | None = None, *args: Any, **kwargs: Any) -> None:
+    def __init__(self, config: LLMConfig, logger: BoundLogger | None = None, *args: Any, **kwargs: Any) -> None:
         client = OpenAI(
             api_key=config.openai_api_key,
             base_url=config.openai_api_base_url,
